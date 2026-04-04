@@ -24,7 +24,7 @@ export default function Dashboard() {
       if (uStr) {
         const parsed = JSON.parse(uStr);
         if (parsed?.id) {
-          const res = await fetch(`http://localhost:5000/api/user/${parsed.id}`);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/user/${parsed.id}`);
           if (res.ok) {
             const data = await res.json();
             if (data.orders) setUserOrders(data.orders);
@@ -59,7 +59,7 @@ export default function Dashboard() {
     const isClient = typeof window !== "undefined";
     if (isClient) {
       // Fetch global settings (Exchange rate & Margin)
-      fetch("http://localhost:5000/api/admin/settings")
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/admin/settings`)
         .then(res => res.json())
         .then(data => {
             if (data.exchangeRate) setExchangeRate(data.exchangeRate);
@@ -77,7 +77,7 @@ export default function Dashboard() {
           }
           if (parsed && parsed.id) {
             // Fetch real user balance and details
-            fetch(`http://localhost:5000/api/user/${parsed.id}`)
+            fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/user/${parsed.id}`)
               .then(res => {
                 if (!res.ok) throw new Error('Failed to fetch user');
                 return res.json();
@@ -98,7 +98,7 @@ export default function Dashboard() {
       }
 
       // Fetch Daisy Countries
-      fetch("http://localhost:5000/api/integrations/daisy/countries")
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/integrations/daisy/countries`)
         .then(res => res.json())
         .then(data => {
           if (data.data?.countries) setDaisyCountries(data.data.countries);
@@ -106,7 +106,7 @@ export default function Dashboard() {
         .catch(err => console.error("Error fetching daisy countries:", err));
 
       // Fetch Daisy US Services (187 is USA)
-      fetch("http://localhost:5000/api/integrations/daisy/services/187")
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/integrations/daisy/services/187`)
         .then(res => res.json())
         .then(data => {
           if (data.data?.services) setUsServices(data.data.services);
@@ -141,7 +141,7 @@ export default function Dashboard() {
 
   const fetchPriceForService = (countryId: number, serviceCode: string, cb: (price: number) => void) => {
       setPriceLoading(true);
-      fetch('http://localhost:5000/api/integrations/daisy/prices', {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/integrations/daisy/prices`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ country: countryId, service: serviceCode })
@@ -169,7 +169,7 @@ export default function Dashboard() {
       return;
     }
 
-    fetch('http://localhost:5000/api/integrations/daisy/purchase', {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/integrations/daisy/purchase`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: u.id, service: serviceCode, country, price: pNum })
@@ -445,7 +445,7 @@ export default function Dashboard() {
                       
                       try {
                           // Generate Virtual Account directly (PocketFi handles customer implicitly)
-                          const res = await fetch('http://localhost:5000/api/integrations/pocketfi/virtual-account', {
+                          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/integrations/pocketfi/virtual-account`, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({ userId: u.id })
@@ -617,7 +617,7 @@ export default function Dashboard() {
                                 setAllServices([]);
                                 setAllSelectedService(null);
                                 setServicePrice(null);
-                                fetch(`http://localhost:5000/api/integrations/daisy/services/${country.id}`)
+                                fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/integrations/daisy/services/${country.id}`)
                                   .then(res => res.json())
                                   .then(data => { if (data.data?.services) setAllServices(data.data.services); });
                             }}>

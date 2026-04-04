@@ -25,7 +25,7 @@ export default function UserDetails() {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/user/${userId}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/user/${userId}`);
       if (!res.ok) throw new Error("Failed to fetch user");
       const data = await res.json();
       setUser(data);
@@ -43,7 +43,7 @@ export default function UserDetails() {
     }
     setProcessLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/balance`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/admin/users/${userId}/balance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: Number(amountInput), action: balanceAction }),
@@ -68,7 +68,7 @@ export default function UserDetails() {
     if (!window.confirm(`Are you sure you want to ${user?.status === "Suspended" ? "Activate" : "Suspend"} this user?`)) return;
     setProcessLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/status`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/admin/users/${userId}/status`, {
         method: "POST",
       });
       if (res.ok) {

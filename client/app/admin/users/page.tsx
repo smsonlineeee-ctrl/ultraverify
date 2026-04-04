@@ -11,7 +11,7 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/admin/users");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/admin/users`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setUsers(data);
@@ -38,7 +38,7 @@ export default function AdminUsers() {
     const val = parseFloat(amount);
     if (!isNaN(val) && modal.user) {
       try {
-        const res = await fetch(`http://localhost:5000/api/admin/users/${modal.user?._id}/balance`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/admin/users/${modal.user?._id}/balance`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: val, action: modal.type })

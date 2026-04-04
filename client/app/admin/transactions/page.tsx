@@ -11,7 +11,7 @@ export default function AdminTransactions() {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/transactions");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/admin/transactions`);
         const data = await res.json();
         setTransactions(data || []);
       } catch (err) {

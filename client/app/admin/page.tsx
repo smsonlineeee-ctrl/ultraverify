@@ -11,7 +11,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/dashboard-stats");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/admin/dashboard-stats`);
         const data = await res.json();
         setStats(data);
       } catch (err) {

@@ -11,7 +11,7 @@ export default function AdminOrders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/orders");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/admin/orders`);
         const data = await res.json();
         setOrders(data || []);
       } catch (err) {
