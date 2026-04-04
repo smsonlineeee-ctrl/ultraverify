@@ -2,11 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react";
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -26,29 +24,7 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-100">
-      {/* Mobile Header */}
-      <header className="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200 shrink-0 relative z-50">
-        <Link href="/admin" className="text-xl font-bold text-gray-800">SMSAdmin</Link>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 focus:outline-none">
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </header>
-
-      {/* Mobile Menu Dropdown */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-[65px] left-0 right-0 bg-white shadow-xl z-40 flex flex-col max-h-[calc(100vh-65px)] overflow-y-auto">
-          <nav className="flex flex-col p-4 gap-1 text-sm font-medium">
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin" className="flex items-center px-4 py-3 bg-gray-100 text-gray-800 rounded-lg">Dashboard</Link>
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/users" className="flex items-center px-4 py-3 text-gray-500 rounded-lg">Users</Link>
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/transactions" className="flex items-center px-4 py-3 text-gray-500 rounded-lg">Transactions</Link>
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/orders" className="flex items-center px-4 py-3 text-gray-500 rounded-lg">All Orders</Link>
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/settings" className="flex items-center px-4 py-3 text-gray-500 rounded-lg">Settings</Link>
-            <button onClick={() => { setIsMobileMenuOpen(false); router.push('/login'); }} className="flex items-center px-4 py-3 text-red-500 font-bold mt-2 rounded-lg text-left">Log out</button>
-          </nav>
-        </div>
-      )}
-
+    <div className="flex h-screen bg-gray-100">
       <aside className="w-64 bg-white text-gray-800 hidden md:flex flex-col border-r border-gray-200">
         <div className="p-6 border-b border-gray-200">
           <Link href="/admin" className="text-xl font-bold text-gray-800">SMSAdmin</Link>
