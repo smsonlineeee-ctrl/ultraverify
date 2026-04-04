@@ -64,20 +64,21 @@ export default function AdminDashboard() {
         ) : (
           <>
             <div className="grid md:grid-cols-4 gap-6 mb-8">
-              <div className="p-6 rounded-xl border border-gray-200 shadow-sm bg-white text-gray-900">
-                <h3 className="text-gray-500 text-sm font-medium mb-1">Total Users</h3>
-                <p className="text-3xl font-bold text-gray-900">{stats?.totalUsers || 0}</p>
+              <div className="p-6 rounded-xl border border-transparent shadow-md bg-gradient-to-br from-blue-600 to-blue-800 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                <h3 className="text-blue-100 text-xs font-medium mb-1 tracking-wider uppercase">Total Users</h3>
+                <p className="text-3xl font-bold">{stats?.totalUsers || 0}</p>
               </div>
-              <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm">
-                <h3 className="text-gray-500 text-sm font-medium mb-1">Active Numbers</h3>
+              <div className="p-6 rounded-xl border border-blue-50 bg-blue-50 shadow-sm text-gray-900">
+                <h3 className="text-gray-500 text-xs font-medium mb-1 tracking-wider uppercase">Active Numbers</h3>
                 <p className="text-3xl font-bold text-gray-900">{stats?.activeNumbers || 0}</p>
               </div>
-              <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm">
-                <h3 className="text-gray-500 text-sm font-medium mb-1">Total User Balances</h3>
-                <p className="text-3xl font-bold text-green-600">₦{(stats?.revenue || 0).toLocaleString()}</p>
+              <div className="p-6 rounded-xl border border-blue-50 bg-blue-50 shadow-sm text-gray-900">
+                <h3 className="text-gray-500 text-xs font-medium mb-1 tracking-wider uppercase">Total User Balances</h3>
+                <p className="text-3xl font-bold text-blue-600">₦{(stats?.revenue || 0).toLocaleString()}</p>
               </div>
-              <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm">
-                <h3 className="text-gray-500 text-sm font-medium mb-1">New Today</h3>
+              <div className="p-6 rounded-xl border border-blue-50 bg-blue-50 shadow-sm">
+                <h3 className="text-gray-500 text-xs font-medium mb-1 tracking-wider uppercase">New Today</h3>
                 <p className="text-3xl font-bold text-blue-600">+{stats?.newToday || 0}</p>
               </div>
               <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm">

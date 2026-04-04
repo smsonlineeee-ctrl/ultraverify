@@ -209,8 +209,16 @@ export default function Dashboard() {
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-[65px] left-0 right-0 bg-white shadow-xl z-40 flex flex-col max-h-[calc(100vh-65px)] overflow-y-auto">
-          <nav className="flex flex-col p-4 gap-1 text-sm font-medium">
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}></div>
+          <div className="relative flex flex-col w-72 max-w-[85%] bg-white h-full shadow-2xl transition-transform transform translate-x-0 overflow-y-auto">
+            <div className="p-5 border-b border-gray-100 flex justify-between items-center">
+              <span className="text-xl font-bold text-blue-600">Ultra verify</span>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-500 hover:text-gray-800 focus:outline-none">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <nav className="flex flex-col p-4 gap-1 text-sm font-medium">
             <button onClick={() => { setView("dashboard"); setIsMobileMenuOpen(false); }} className={`flex items-center gap-3 px-4 py-3 rounded-lg ${view === "dashboard" ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-700"}`}><Home className="w-5 h-5"/> Dashboard</button>
             <button onClick={() => { setView("fundwallet"); setIsMobileMenuOpen(false); }} className={`flex items-center gap-3 px-4 py-3 rounded-lg ${view === "fundwallet" ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-700"}`}><CreditCard className="w-5 h-5"/> Fund wallet</button>
             <button onClick={() => { setView("usanumbers"); setIsMobileMenuOpen(false); }} className={`flex items-center gap-3 px-4 py-3 rounded-lg ${view === "usanumbers" ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-700"}`}><Phone className="w-5 h-5"/> USA numbers</button>
@@ -223,6 +231,7 @@ export default function Dashboard() {
             <button onClick={() => { setView("transactionsdashboard"); setIsMobileMenuOpen(false); }} className={`flex items-center gap-3 px-4 py-3 rounded-lg ${view === "transactionsdashboard" ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-700"}`}><FileText className="w-5 h-5"/> Transaction history</button>
             <button onClick={handleSignOut} className="flex items-center gap-3 px-4 py-3 mt-2 rounded-lg text-red-600 hover:bg-red-50 font-bold"><LogOut className="w-5 h-5"/> Sign out</button>
           </nav>
+        </div>
         </div>
       )}
 
@@ -335,9 +344,9 @@ export default function Dashboard() {
                 <span className="text-3xl font-bold mb-2">₦{userBalance.toLocaleString()}</span>
                 <button className="bg-white text-blue-700 font-bold px-4 py-1.5 rounded-lg text-xs shadow-sm hover:shadow transition mt-auto" onClick={() => setView("fundwallet")}>Recharge</button>
               </div>
-              <div className="p-6 rounded-xl shadow-sm bg-white border border-gray-100 text-gray-900 flex flex-col items-start">
-                <span className="text-xs text-gray-500 mb-1 uppercase tracking-wider font-medium">SMS Purchased - Lifetime</span>
-                <span className="text-3xl font-bold mb-2 text-gray-800">0</span>
+              <div className="p-6 rounded-xl shadow-sm bg-blue-50 border border-blue-100 flex flex-col items-start">
+                <span className="text-xs text-blue-700 mb-1 uppercase tracking-wider font-semibold">SMS Purchased - Lifetime</span>
+                <span className="text-3xl font-bold mb-2 text-blue-900">{userOrders.length}</span>
               </div>
               <div className="p-6 rounded-xl shadow-md text-white bg-gradient-to-br from-blue-500 to-blue-700 flex flex-col items-start relative overflow-hidden">
                 <div className="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 bg-white opacity-10 rounded-full blur-xl"></div>

@@ -26,15 +26,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-[65px] left-0 right-0 bg-white shadow-xl z-40 flex flex-col max-h-[calc(100vh-65px)] overflow-y-auto">
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}></div>
+          <div className="relative flex flex-col w-64 max-w-[80%] bg-white h-full shadow-2xl transition-transform transform translate-x-0 overflow-y-auto">
+            <div className="p-5 border-b border-gray-100 flex justify-between items-center">
+              <span className="text-xl font-bold text-gray-800">SMSAdmin</span>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-500 hover:text-gray-800 focus:outline-none">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
           <nav className="flex flex-col p-4 gap-1 text-sm font-medium">
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin" className={`flex items-center px-4 py-3 ${pathname === '/admin' ? 'bg-gray-100 text-gray-800' : 'text-gray-500'} rounded-lg`}>Dashboard</Link>
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/users" className={`flex items-center px-4 py-3 ${pathname.includes('/admin/users') ? 'bg-gray-100 text-gray-800' : 'text-gray-500'} rounded-lg`}>Users</Link>
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/transactions" className={`flex items-center px-4 py-3 ${pathname.includes('/admin/transactions') ? 'bg-gray-100 text-gray-800' : 'text-gray-500'} rounded-lg`}>Transactions</Link>
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/orders" className={`flex items-center px-4 py-3 ${pathname.includes('/admin/orders') ? 'bg-gray-100 text-gray-800' : 'text-gray-500'} rounded-lg`}>All Orders</Link>
-            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/settings" className={`flex items-center px-4 py-3 ${pathname.includes('/admin/settings') ? 'bg-gray-100 text-gray-800' : 'text-gray-500'} rounded-lg`}>Settings</Link>
+            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin" className={`flex items-center px-4 py-3 ${pathname === '/admin' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-500'} rounded-lg`}>Dashboard</Link>
+            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/users" className={`flex items-center px-4 py-3 ${pathname.includes('/admin/users') ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-500'} rounded-lg`}>Users</Link>
+            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/transactions" className={`flex items-center px-4 py-3 ${pathname.includes('/admin/transactions') ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-500'} rounded-lg`}>Transactions</Link>
+            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/orders" className={`flex items-center px-4 py-3 ${pathname.includes('/admin/orders') ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-500'} rounded-lg`}>All Orders</Link>
+            <Link onClick={()=>setIsMobileMenuOpen(false)} href="/admin/settings" className={`flex items-center px-4 py-3 ${pathname.includes('/admin/settings') ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-500'} rounded-lg`}>Settings</Link>
             <button onClick={() => { setIsMobileMenuOpen(false); router.push('/login'); }} className="flex items-center px-4 py-3 text-red-500 font-bold mt-2 rounded-lg text-left">Log out</button>
           </nav>
+        </div>
         </div>
       )}
 
