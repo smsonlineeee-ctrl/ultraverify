@@ -111,6 +111,12 @@ router.post('/daisy/purchase', async (req, res) => {
     res.json(response.data);
   } catch (err) {
     console.error("Daisy API Purchase Error: ", err.response?.data || err.message);
+    
+    // Intercept specific provider errors so users aren't confused by OUR API wallet balance versus THEIR local wallet balance
+    if (err.response?.data?.code === 'INSUFFICIENT_BALANCE' || err.response?.data?.error === 'Insufficient wallet balance.') {
+        return res.status(500).json({ error: 'System out of stock or provider limits reached. Please contact the administrator.' });
+    }
+
     res.status(500).json({ error: err.response?.data || 'Failed to purchase number' });
   }
 });
