@@ -164,30 +164,62 @@ router.get('/pocketfi/webhook', (req, res) => {
 
 router.post('/pocketfi/webhook', async (req, res) => {
     // Pocketfi sends event triggers here whenever a transfer is made to a user's Virtual Account
-    const event = req.body;
-    
-    // Note: Always verify the signature hash in headers in production for security
-    // const signature = req.headers['x-pocketfi-signature'];
+      console.log("=== POCKETFI WEBHOOK RECEIVED ===");
+      console.log(JSON.stringify(req.body, null, 2));
+      
+      const event = req.body;
 
-    try {
-        if (event && event.event === 'charge.success' && event.data) {
-            const { amount, customer } = event.data;
-            const customerCode = customer.customer_code;
+      // Note: Always verify the signature hash in headers in production for security
+      // const signature = req.headers['x-pocketfi-signature'];
 
-            if (customerCode) {
-                // Find your user based on the pocketfi customer code
-                const user = await User.findOne({ pocketfi_customer_code: customerCode });
-                
-                if (user) {
-                    // Credit user's wallet (ensure you handle currency units correctly, e.g., if amount is in kobo, divide by 100)
-                    user.balance += (Number(amount)); 
-                    await user.save();
-                    console.log(`Successfully credited ${amount} to user ${user.email}`);
-                }
-            }
-        }
-        // Respond with 200 OK fast so PocketFi knows you received it
-        res.status(200).send('OK');
+      try {
+          if (event && (event.event === 'charge.success' || event.event === 'transfer.success') && event.data) {
+              const { amount, customer } = event.data;
+              const customerCode = customer?.customer_code;
+              const customerEmail = customer?.email;
+              const accountNumber = event.data?.authorization?.receiver_bank_account_number || event.data?.account_number;
+
+              // Find your user based on the pocketfi customer code, email, or account number!
+              let user = null;
+              if (customerCode) user = await User.findOne({ pocketfi_customer_code: customerCode });
+              if (!user && customerEmail) user = await User.findOne({ email: customerEmail });
+              if (!user && accountNumber) user = await User.findOne({ virtual_account_number: accountNumber });
+
+              if (user) {
+                  // Credit user's wallet (assuming PocketFi amount is in kobo or absolute value, adjust if needed)
+                  const creditAmount = Number(amount); 
+                  user.balance = (user.balance || 0) + creditAmount;
+                  
+                  // Also save their customerCode if we found them by email but didn't have code
+                  if (!user.pocketfi_customer_code && customerCode) {
+                      user.pocketfi_customer_code = customerCode;
+                  }
+
+                  // Add transaction record
+                  const transactionRecord = {
+                      id: 'TXN_' + Date.now() + Math.floor(Math.random() * 1000),
+                      amount: creditAmount,
+                      type: 'Funding',
+                      status: 'Completed',
+                      date: new Date().toISOString(),
+                      method: 'PocketFi Virtual Account',
+                      reference: event.data?.reference || ''
+                  };
+                  user.transactions = user.transactions || [];
+                  user.transactions.push(transactionRecord);
+
+                  // Mark array as modified so mongoose saves it if it's mixed type Array
+                  user.markModified('transactions');
+                  await user.save();
+
+                  console.log(`Successfully credited NGN ${creditAmount} to user ${user.email}`);
+              } else {
+                  console.log(`Webhook ignored: Could not find user with email ${customerEmail} or account ${accountNumber} or code ${customerCode}`);
+              }
+          }
+          
+          res.status(200).send('Webhook received successfully');
+          
     } catch (err) {
         console.error('Webhook processing failed:', err);
         res.status(500).json({ error: 'Webhook processing failed' });
