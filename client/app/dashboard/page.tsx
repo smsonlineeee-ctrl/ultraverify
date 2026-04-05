@@ -182,7 +182,14 @@ export default function Dashboard() {
         setUserBalance(prev => prev - pNum);
         setShowInsufficient(false);
       } else {
-        const errorMsg = data.message || (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error) || JSON.stringify(data);
+        let errorMsg = "Unknown error";
+        if (data.error) {
+            errorMsg = typeof data.error === 'object' ? JSON.stringify(data.error) : data.error;
+        } else if (data.message) {
+            errorMsg = typeof data.message === 'object' ? JSON.stringify(data.message) : data.message;
+        } else {
+            errorMsg = JSON.stringify(data);
+        }
         alert("Purchase failed: " + errorMsg);
       }
     })
