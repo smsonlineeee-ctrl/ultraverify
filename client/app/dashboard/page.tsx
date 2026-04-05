@@ -182,7 +182,8 @@ export default function Dashboard() {
         setUserBalance(prev => prev - pNum);
         setShowInsufficient(false);
       } else {
-        alert("Purchase failed: " + (data.message || data.error || JSON.stringify(data)));
+        const errorMsg = data.message || (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error) || JSON.stringify(data);
+        alert("Purchase failed: " + errorMsg);
       }
     })
     .catch(err => alert("Error purchasing: " + err.message));
@@ -697,7 +698,7 @@ export default function Dashboard() {
                     disabled={!allSelectedService || priceLoading || !servicePrice || servicePrice <= 0}
                     onClick={() => {
                       if (allSelectedService && allSelectedCountry && servicePrice && servicePrice > 0) {
-                        startPurchase(allSelectedCountry.name, allSelectedService.code, servicePrice);
+                        startPurchase(allSelectedCountry.id, allSelectedService.code, servicePrice);
                       }
                     }}
                   >

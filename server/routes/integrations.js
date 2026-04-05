@@ -55,7 +55,7 @@ router.post('/daisy/prices', async (req, res) => {
 
 // 4. Purchase Number
 router.post('/daisy/purchase', async (req, res) => {
-  const { userId, country, service, service_name, price } = req.body;
+  const { userId, country, service, price } = req.body;
   try {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
@@ -65,18 +65,35 @@ router.post('/daisy/purchase', async (req, res) => {
         return res.status(400).json({ error: 'Insufficient Balance. Please top up your wallet.' });
     }
 
-    const response = await axios.post(`${DAISY_BASE_URL}/purchase`, { country, service, service_name, price }, {
+    // Call Daisy API to purchase without the "price" constraint because we use NGN locally and Daisy uses USD
+    const response = await axios.post(`${DAISY_BASE_URL}/purchase`, { country, service }, {
       headers: { Authorization: `Bearer ${DAISY_API_KEY}` }
     });
     
     // Decrease user balance if success
-    if (response.data && response.data.success) {
+    // Note: ensure we check the correct field Daisy returns (e.g. data.id or data.phone)
+    if (response.data && response.data.phone) {
       user.balance -= Number(price);
+      
+      // Store order history natively here too!
+      user.orders = user.orders || [];
+      user.orders.push({
+          id: response.data.id || 'ORD_' + Date.now(),
+          service: service,
+          country: country,
+          phone: response.data.phone,
+          price: Number(price),
+          date: new Date().toISOString(),
+          status: 'Active'
+      });
+      user.markModified('orders');
+
       await user.save();
     }
     
     res.json(response.data);
   } catch (err) {
+    console.error("Daisy API Purchase Error: ", err.response?.data || err.message);
     res.status(500).json({ error: err.response?.data || 'Failed to purchase number' });
   }
 });
