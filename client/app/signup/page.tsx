@@ -87,8 +87,8 @@ export default function SignupPage() {
             <input id="email" type="email" onChange={handleChange} value={formData.email} autoComplete="email" required placeholder="you@example.com" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:bg-white transition" />
           </div>
           <div>
-            <label className="block text-gray-700 mb-1 text-sm font-medium" htmlFor="phone">Phone number</label>
-            <input id="phone" type="tel" onChange={handleChange} value={formData.phone} autoComplete="tel" required placeholder="+1 (234) 567-8900" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:bg-white transition" />
+            <label className="block text-gray-700 mb-1 text-sm font-medium" htmlFor="phone">Phone number <span className="text-gray-500 font-normal">(Must be exactly 11 digits)</span></label>
+            <input id="phone" type="tel" minLength={11} maxLength={11} onChange={handleChange} value={formData.phone} autoComplete="tel" required placeholder="08012345678" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-gray-400 focus:bg-white transition" />
           </div>
           <div>
             <label className="block text-gray-700 mb-1 text-sm font-medium" htmlFor="password">Password</label>
