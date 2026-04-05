@@ -27,7 +27,7 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
               <Link href="/" className="flex items-center gap-2">
-                <img src="/logoultra1.jpeg" alt="Logo" className="h-10 md:h-14 w-auto object-contain rounded-md" />
+                <img src="/logo.png" alt="Logo" className="h-10 md:h-14 w-auto object-contain rounded-md" />
               </Link>
             </div>
             
@@ -56,7 +56,7 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
                <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}></div>
                <div className="relative flex flex-col w-64 max-w-[80%] bg-white h-[100vh] shadow-2xl transition-transform transform translate-x-0 overflow-y-auto">
                  <div className="p-5 border-b border-gray-100 flex justify-between items-center">
-                   <img src="/logoultra1.jpeg" alt="Logo" className="h-8 w-auto object-contain rounded-md" />
+                   <img src="/logo.png" alt="Logo" className="h-8 w-auto object-contain rounded-md" />
                    <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-500 hover:text-gray-800 focus:outline-none">
                      <X className="w-6 h-6" />
                    </button>
