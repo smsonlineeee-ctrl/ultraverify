@@ -88,17 +88,21 @@ router.post('/daisy/purchase', async (req, res) => {
     });
     
     // Decrease user balance if success
-    // Note: ensure we check the correct field Daisy returns (e.g. data.id or data.phone)
-    if (response.data && response.data.phone) {
+    const purchaseData = response.data.data || response.data;
+    const phoneNum = purchaseData.phone || purchaseData.phone_number || purchaseData.number;
+    const orderId = purchaseData.id || purchaseData.activation_id || purchaseData.order_id;
+    
+    // In case daisy returns a success boolean or message, allow logging even if phone is nested
+    if (response.data.success || phoneNum) {
       user.balance -= Number(price);
       
       // Store order history natively here too!
       user.orders = user.orders || [];
       user.orders.push({
-          id: response.data.id || 'ORD_' + Date.now(),
+          id: orderId || 'ORD_' + Date.now(),
           service: service,
           country: countryName || String(country), // Store the display name
-          phone: response.data.phone,
+          phone: phoneNum || 'Pending',
           price: Number(price),
           date: new Date().toISOString(),
           status: 'Active'
@@ -108,7 +112,14 @@ router.post('/daisy/purchase', async (req, res) => {
       await user.save();
     }
     
-    res.json(response.data);
+    // We send back properties so the frontend sees 'phone' and 'id' easily
+    res.json({
+      success: response.data.success,
+      message: response.data.message,
+      phone: phoneNum,
+      id: orderId,
+      ...purchaseData
+    });
   } catch (err) {
     console.error("Daisy API Purchase Error: ", err.response?.data || err.message);
     

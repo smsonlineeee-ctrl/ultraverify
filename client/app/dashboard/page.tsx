@@ -177,8 +177,8 @@ export default function Dashboard() {
     })
     .then(r => r.json())
     .then(data => {
-      if (data.phone) {
-        alert("Purchase successful! Number: " + data.phone);
+      if (data.phone || data.success) {
+        alert("Purchase successful! Number: " + (data.phone || data.message || "Pending"));
         setUserBalance(prev => prev - pNum);
         setShowInsufficient(false);
       } else {
