@@ -65,17 +65,19 @@ export default function AdminTransactions() {
                   <tbody className="divide-y divide-gray-100">
                     {transactions.map((tx: any) => (
                       <tr key={tx._id || tx.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-4 text-gray-500">#{tx._id || tx.id}</td>
-                        <td className="px-4 py-4 text-gray-800">{tx.email}</td>
+                        <td className="px-4 py-4 text-gray-500">{tx._id || tx.id}</td>
+                        <td className="px-4 py-4 text-gray-800">{tx.userEmail || tx.email}</td>
                         <td className="px-4 py-4">
-                          <span className={`px-2 py-1 rounded text-[10px] font-semibold uppercase tracking-wider ${tx.action === 'credit' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                            {tx.action}
+                          <span className={`px-2 py-1 rounded text-[10px] font-semibold uppercase tracking-wider ${tx.type === 'Funding' || tx.action === 'credit' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            {tx.type || tx.action || 'Unknown'}
                           </span>
                         </td>
                         <td className="px-4 py-4 text-gray-600">
-                          {tx.action === 'credit' ? `+${tx.creditAmount} via ${tx.bankOrDepositName}` : `-${tx.debitAmount} for ${tx.debitItem}`}
+                          {tx.type === 'Funding' || tx.action === 'credit' 
+                            ? `+NGN ${tx.amount || tx.creditAmount} via ${tx.method || tx.bankOrDepositName || 'Deposit'}` 
+                            : `-NGN ${tx.amount || tx.debitAmount} for ${tx.method || tx.debitItem || 'Purchase'}`}
                         </td>
-                        <td className="px-4 py-4 text-gray-500">{new Date(tx.time).toLocaleString()}</td>
+                        <td className="px-4 py-4 text-gray-500">{new Date(tx.date || tx.time || Date.now()).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>

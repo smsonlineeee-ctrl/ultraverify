@@ -936,13 +936,13 @@ export default function Dashboard() {
                     <span>Amount</span>
                     <span className="text-right">Date</span>
                   </div>
-                  {userTransactions.map((tx, idx) => (
+                  {[...userTransactions].reverse().map((tx, idx) => (
                     <div key={idx} className="flex justify-between items-center text-xs py-3 border-b border-gray-50">
-                      <span className="font-semibold text-gray-800">{tx.description}</span>
-                      <span className={`font-bold ${tx.type === 'deposit' ? 'text-green-600' : 'text-red-500'}`}>
-                        {tx.type === 'deposit' ? '+' : '-'}₦{tx.amount}
+                      <span className="font-semibold text-gray-800">{tx.method || tx.description || tx.bankOrDepositName || 'Deposit'}</span>
+                      <span className={`font-bold ${tx.type === 'Funding' || tx.type === 'deposit' || tx.action === 'credit' ? 'text-green-600' : 'text-red-500'}`}>
+                        {tx.type === 'Funding' || tx.type === 'deposit' || tx.action === 'credit' ? '+' : '-'}₦{tx.amount || tx.creditAmount || tx.debitAmount || 0}
                       </span>
-                      <span className="text-right text-gray-400">{new Date(tx.date || Date.now()).toLocaleDateString()}</span>
+                      <span className="text-right text-gray-400">{new Date(tx.date || tx.time || Date.now()).toLocaleDateString()}</span>
                     </div>
                   ))}
                 </div>

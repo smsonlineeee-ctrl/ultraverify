@@ -69,11 +69,55 @@ router.get('/dashboard-stats', async (req, res) => {
 });
 
 router.get('/transactions', async (req, res) => {
-  res.json([]);
+  try {
+    const users = await User.find({ "transactions.0": { $exists: true } }).select('email displayName transactions');
+    let allTransactions = [];
+    users.forEach(u => {
+      if (u.transactions) {
+        u.transactions.forEach(tx => {
+           allTransactions.push({
+             ...tx,
+             userEmail: u.email,
+             userName: u.displayName
+           });
+        });
+      }
+    });
+
+    // Sort descending by date
+    allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    res.json(allTransactions);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
 router.get('/orders', async (req, res) => {
-  res.json([]);
+  try {
+    const users = await User.find({ "orders.0": { $exists: true } }).select('email displayName orders');
+    let allOrders = [];
+    users.forEach(u => {
+      if (u.orders) {
+        u.orders.forEach(o => {
+           allOrders.push({
+             ...o,
+             userEmail: u.email,
+             userName: u.displayName
+           });
+        });
+      }
+    });
+
+    // Sort descending by date
+    allOrders.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+
+    res.json(allOrders);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
 // Suspend/Activate User

@@ -239,10 +239,30 @@ export default function UserDetails() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {/* Later integrate real user transaction map here */}
-                  <tr>
-                    <td colSpan={4} className="px-4 py-8 text-center text-gray-500">No transactions found for this user yet.</td>
-                  </tr>
+                  {user?.transactions && user.transactions.length > 0 ? (
+                    user.transactions.map((tx: any, idx: number) => (
+                      <tr key={tx._id || tx.id || idx} className="hover:bg-gray-50">
+                        <td className="px-4 py-4 text-gray-500 whitespace-nowrap">{new Date(tx.date || tx.time || Date.now()).toLocaleString()}</td>
+                        <td className="px-4 py-4">
+                          <span className={`px-2 py-1 rounded text-xs font-semibold uppercase tracking-wider ${tx.type === 'Funding' || tx.action === 'credit' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            {tx.type || tx.action || 'Unknown'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 text-gray-600">
+                           {tx.type === 'Funding' || tx.action === 'credit' 
+                             ? `Via ${tx.method || tx.bankOrDepositName || 'Deposit'} ` + (tx.reference ? `(${tx.reference})` : '')
+                             : `For ${tx.method || tx.debitItem || 'Purchase'}`}
+                        </td>
+                        <td className={`px-4 py-4 text-right font-semibold whitespace-nowrap ${tx.type === 'Funding' || tx.action === 'credit' ? 'text-green-600' : 'text-red-500'}`}>
+                          {tx.type === 'Funding' || tx.action === 'credit' ? '+' : '-'}NGN {tx.amount || tx.creditAmount || tx.debitAmount || 0}
+                        </td>
+                      </tr>
+                    )).reverse()
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="px-4 py-8 text-center text-gray-500">No transactions found for this user yet.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
