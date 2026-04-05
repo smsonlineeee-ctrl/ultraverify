@@ -65,9 +65,12 @@ router.post('/daisy/purchase', async (req, res) => {
         return res.status(400).json({ error: 'Insufficient Balance. Please top up your wallet.' });
     }
 
+    // Ensure country is parsed as integer for Daisy API
+    const countryIdInt = parseInt(country, 10);
+
     // Fetch the correct USD price and max price from Daisy directly so we satisfy their required field safely
     let daisyPrice = null;
-    const priceRes = await axios.post(`${DAISY_BASE_URL}/prices`, { country, service }, {
+    const priceRes = await axios.post(`${DAISY_BASE_URL}/prices`, { country: countryIdInt, service }, {
       headers: { Authorization: `Bearer ${DAISY_API_KEY}` }
     });
     if (priceRes.data?.data?.tiers?.[0]) {
@@ -77,7 +80,7 @@ router.post('/daisy/purchase', async (req, res) => {
     }
 
     // Call Daisy API to purchase with the official USD price as constraint
-    const response = await axios.post(`${DAISY_BASE_URL}/purchase`, { country: parseInt(country), service, price: daisyPrice }, {
+    const response = await axios.post(`${DAISY_BASE_URL}/purchase`, { country: countryIdInt, service, price: daisyPrice }, {
       headers: { Authorization: `Bearer ${DAISY_API_KEY}` }
     });
     
