@@ -27,6 +27,7 @@ export default function Dashboard() {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/user/${parsed.id}`);
           if (res.ok) {
             const data = await res.json();
+            if (data.balance !== undefined) setUserBalance(data.balance);
             if (data.orders) setUserOrders(data.orders);
             if (data.transactions) setUserTransactions(data.transactions);
           }
@@ -441,10 +442,14 @@ export default function Dashboard() {
                    <div className="text-lg font-bold text-gray-800 mb-6 uppercase">{userFullName}</div>
 
                    <button 
-                     onClick={() => setView('dashboard')}
-                     className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold text-sm shadow-md transition"
+                     onClick={async () => {
+                       await fetchUserHistory();
+                       setView('dashboard');
+                     }}
+                     disabled={isLoadingHistory}
+                     className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-75 text-white py-3 rounded-lg font-bold text-sm shadow-md transition"
                    >
-                     I Have Made This Payment
+                     {isLoadingHistory ? 'Checking your payment...' : 'I Have Made This Payment'}
                    </button>
                    <div className="text-xs font-medium text-blue-600/80 mt-3">
                      Your payment will reflect in your wallet within 5 minutes
