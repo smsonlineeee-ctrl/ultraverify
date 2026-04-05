@@ -55,51 +55,7 @@ export default function AdminUsers() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {modal.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full">
-            <h2 className="text-lg font-bold mb-4 text-gray-800">
-              {modal.type === 'add' ? 'Add Balance' : 'Deduct Balance'} <span className="text-sm font-normal text-gray-500 block">for {modal.user?.displayName || modal.user?.email}</span>
-            </h2>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Amount (₦)</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6 text-gray-800"
-              placeholder="Enter amount"
-            />
-            <div className="flex justify-end gap-3">
-              <button onClick={closeModal} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">Cancel</button>
-              <button 
-                onClick={handleAction} 
-                className={`px-4 py-2 text-white rounded-lg font-medium ${modal.type === 'add' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
-              >
-                {modal.type === 'add' ? 'Add' : 'Minus'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      <aside className="w-64 bg-white text-gray-800 hidden md:flex flex-col border-r border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <Link href="/admin" className="text-xl font-bold text-gray-800">SMSAdmin</Link>
-        </div>
-        <nav className="flex-1 p-4 space-y-1">
-          <Link href="/admin" className="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Dashboard</Link>
-          <Link href="/admin/users" className="flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded-lg">Users</Link>
-          <Link href="/admin/transactions" className="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Transactions</Link>
-          <Link href="/admin/orders" className="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">All Orders</Link>
-          <Link href="/admin/settings" className="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Settings</Link>
-          <div className="pt-4 mt-4 border-t border-gray-100">
-            <Link href="/admin/logout" className="flex items-center px-4 py-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors">
-              Log out
-            </Link>
-          </div>
-        </nav>
-      </aside>
-      <main className="flex-1 p-8 overflow-y-auto">
+    <div className="w-full">
         <div className="max-w-6xl mx-auto text-sm">
           <div className="p-6 rounded-2xl shadow bg-white mb-8">
             <h1 className="text-lg font-semibold mb-1">User Management</h1>
@@ -163,7 +119,6 @@ export default function AdminUsers() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
   );
 }

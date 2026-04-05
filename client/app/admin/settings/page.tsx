@@ -53,26 +53,7 @@ export default function AdminSettings() {
   const finalPriceNGN = basePriceUSD * exchangeRate * (1 + topUpPercentage / 100);
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <aside className="w-64 bg-white text-gray-800 hidden md:flex flex-col border-r border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <Link href="/admin" className="text-xl font-bold text-gray-800">SMSAdmin</Link>
-        </div>
-        <nav className="flex-1 p-4 space-y-1">
-          <Link href="/admin" className="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Dashboard</Link>
-          <Link href="/admin/users" className="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Users</Link>
-          <Link href="/admin/transactions" className="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Transactions</Link>
-          <Link href="/admin/orders" className="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">All Orders</Link>
-          <Link href="/admin/settings" className="flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded-lg">Settings</Link>
-          <div className="pt-4 mt-4 border-t border-gray-100">
-            <Link href="/admin/logout" className="flex items-center px-4 py-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors">
-              Log out
-            </Link>
-          </div>
-        </nav>
-      </aside>
-      
-      <main className="flex-1 p-8 overflow-y-auto">
+    <div className="w-full">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">System Settings</h1>
           
@@ -153,7 +134,6 @@ export default function AdminSettings() {
           </div>
 
         </div>
-      </main>
-    </div>
+      </div>
   );
 }
