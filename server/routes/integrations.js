@@ -147,7 +147,21 @@ router.post('/pocketfi/virtual-account', async (req, res) => {
     }
 });
 
-// 3. Webhook for Instant Funding
+// 3. Webhook for Instant Funding 
+
+// Added a GET route just so you can check it in your browser comfortably!
+router.get('/pocketfi/webhook', (req, res) => {
+  res.send(`
+    <html>
+      <body style="font-family: sans-serif; padding: 2rem; text-align: center; color: #333;">
+        <h2 style="color: #2e7d32;">✅ Webhook Endpoint is Live</h2>
+        <p>This URL is correctly set up on the Render server.</p>
+        <p style="color: #666; font-size: 0.9em;">(It is currently waiting for <b>POST</b> requests from PocketFi in the background)</p>
+      </body>
+    </html>
+  `);
+});
+
 router.post('/pocketfi/webhook', async (req, res) => {
     // Pocketfi sends event triggers here whenever a transfer is made to a user's Virtual Account
     const event = req.body;
