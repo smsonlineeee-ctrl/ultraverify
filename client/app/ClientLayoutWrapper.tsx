@@ -31,12 +31,21 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
               </Link>
             </div>
             
-            <nav className="hidden text-gray-600 md:flex gap-4 items-center text-sm font-medium">
-              <Link
-                href="/login"
-                className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold tracking-wide hover:bg-blue-500 hover:shadow-lg transition-all"
-              >
+            <nav className="hidden md:flex gap-8 items-center text-sm font-medium text-gray-600">
+              <Link href="#pricing" className="hover:text-blue-600 transition">
+                Pricing
+              </Link>
+              <Link href="/login" className="hover:text-blue-600 transition">
+                Dashboard
+              </Link>
+              <Link href="/login" className="hover:text-blue-600 transition">
                 Login
+              </Link>
+              <Link
+                href="/signup"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+                Sign up
               </Link>
             </nav>
           </div>
@@ -53,7 +62,10 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
                    </button>
                  </div>
                  <nav className="flex flex-col p-4 gap-2 text-base font-medium text-gray-700">
-                   <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 mt-4 bg-blue-600 text-white font-bold text-center rounded-xl shadow-md hover:bg-blue-500 transition">Login</Link>
+                   <Link href="/#pricing" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 hover:bg-gray-50 rounded-lg">Pricing</Link>
+                   <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 hover:bg-gray-50 rounded-lg">Dashboard</Link>
+                   <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 hover:bg-gray-50 rounded-lg">Login</Link>
+                   <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 mt-2 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700 transition">Sign up</Link>
                  </nav>
                </div>
              </div>
