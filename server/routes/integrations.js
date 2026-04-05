@@ -169,25 +169,56 @@ router.post('/pocketfi/webhook', async (req, res) => {
       
       const event = req.body;
 
-      // Note: Always verify the signature hash in headers in production for security
-      // const signature = req.headers['x-pocketfi-signature'];
+      // Using raw payload string if possible, or stringify req.body
+      const payloadString = JSON.stringify(req.body);
+      const pocketfiSignature = req.headers['pocketfi-signature'] || req.headers['http_pocketfi_signature'];
+
+      // You can enable signature verification in production:
+      // const crypto = require('crypto');
+      // const hashkey = crypto.createHmac('sha512', POCKETFI_SECRET_KEY).update(payloadString).digest('hex');
+      // if (pocketfiSignature && pocketfiSignature !== hashkey) {
+      //     return res.status(400).json({ message: "Permission denied, invalid hash" });
+      // }
 
       try {
-          if (event && (event.event === 'charge.success' || event.event === 'transfer.success') && event.data) {
-              const { amount, customer } = event.data;
-              const customerCode = customer?.customer_code;
-              const customerEmail = customer?.email;
-              const accountNumber = event.data?.authorization?.receiver_bank_account_number || event.data?.account_number;
+          let amount, reference, description;
+          let customerEmail, accountNumber, customerCode;
 
-              // Find your user based on the pocketfi customer code, email, or account number!
-              let user = null;
-              if (customerCode) user = await User.findOne({ pocketfi_customer_code: customerCode });
-              if (!user && customerEmail) user = await User.findOne({ email: customerEmail });
-              if (!user && accountNumber) user = await User.findOne({ virtual_account_number: accountNumber });
+          // PocketFi Format (from documentation)
+          if (event.order && event.transaction) {
+              amount = event.order.amount || event.order.settlement_amount;
+              reference = event.transaction.reference;
+              description = event.order.description || '';
+              
+              // Extract identifiers from the description if they exist
+              if (description) {
+                  accountNumber = description.match(/\b\d{10}\b/)?.[0]; // NUBAN
+                  customerEmail = description.match(/[\w.-]+@[\w.-]+\.\w+/)?.[0]; // Email
+              }
+          }
+          // Legacy/Fallback matching (e.g. Paystack-like payload)
+          else if (event.event === 'charge.success' || event.event === 'transfer.success') {
+              amount = event.data?.amount;
+              reference = event.data?.reference;
+              customerCode = event.data?.customer?.customer_code;
+              customerEmail = event.data?.customer?.email;
+              accountNumber = event.data?.authorization?.receiver_bank_account_number || event.data?.account_number;
+          }
 
-              if (user) {
-                  // Credit user's wallet (assuming PocketFi amount is in kobo or absolute value, adjust if needed)
-                  const creditAmount = Number(amount); 
+          if (!amount || !reference) {
+               console.log("Webhook ignored: Payload does not contain amount or reference.");
+               return res.status(200).send('Ignored: Not a valid transaction event');
+          }
+
+          // Search for the user that owns this transaction
+          let user = null;
+          if (customerCode) user = await User.findOne({ pocketfi_customer_code: customerCode });
+          if (!user && customerEmail) user = await User.findOne({ email: customerEmail });
+          if (!user && accountNumber) user = await User.findOne({ virtual_account_number: accountNumber });
+
+          if (user) {
+              // Credit user's wallet
+              const creditAmount = Number(amount); 
                   user.balance = (user.balance || 0) + creditAmount;
                   
                   // Also save their customerCode if we found them by email but didn't have code
@@ -203,7 +234,7 @@ router.post('/pocketfi/webhook', async (req, res) => {
                       status: 'Completed',
                       date: new Date().toISOString(),
                       method: 'PocketFi Virtual Account',
-                      reference: event.data?.reference || ''
+                      reference: reference || ''
                   };
                   user.transactions = user.transactions || [];
                   user.transactions.push(transactionRecord);
@@ -216,7 +247,6 @@ router.post('/pocketfi/webhook', async (req, res) => {
               } else {
                   console.log(`Webhook ignored: Could not find user with email ${customerEmail} or account ${accountNumber} or code ${customerCode}`);
               }
-          }
           
           res.status(200).send('Webhook received successfully');
           
