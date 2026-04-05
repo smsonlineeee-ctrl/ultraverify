@@ -65,8 +65,19 @@ router.post('/daisy/purchase', async (req, res) => {
         return res.status(400).json({ error: 'Insufficient Balance. Please top up your wallet.' });
     }
 
-    // Call Daisy API to purchase without the "price" constraint because we use NGN locally and Daisy uses USD
-    const response = await axios.post(`${DAISY_BASE_URL}/purchase`, { country, service }, {
+    // Fetch the correct USD price and max price from Daisy directly so we satisfy their required field safely
+    let daisyPrice = null;
+    const priceRes = await axios.post(`${DAISY_BASE_URL}/prices`, { country, service }, {
+      headers: { Authorization: `Bearer ${DAISY_API_KEY}` }
+    });
+    if (priceRes.data?.data?.tiers?.[0]) {
+        daisyPrice = parseFloat(priceRes.data.data.tiers[0].price);
+    } else {
+        return res.status(400).json({ error: 'This service is currently unavailable or out of stock.' });
+    }
+
+    // Call Daisy API to purchase with the official USD price as constraint
+    const response = await axios.post(`${DAISY_BASE_URL}/purchase`, { country: parseInt(country), service, price: daisyPrice }, {
       headers: { Authorization: `Bearer ${DAISY_API_KEY}` }
     });
     
