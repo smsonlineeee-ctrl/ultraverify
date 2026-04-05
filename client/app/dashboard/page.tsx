@@ -201,7 +201,9 @@ export default function Dashboard() {
     <div className="flex flex-col md:flex-row h-screen bg-gray-50 overflow-hidden">
       {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200 shrink-0 relative z-50">
-        <Link href="/" className="text-xl font-bold text-blue-600">Ultra verify</Link>
+        <Link href="/" className="flex items-center">
+          <img src="/logo.png" alt="Logo" className="h-8 w-auto object-contain" />
+        </Link>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 focus:outline-none">
           {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
@@ -213,7 +215,9 @@ export default function Dashboard() {
           <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}></div>
           <div className="relative flex flex-col w-72 max-w-[85%] bg-white h-full shadow-2xl transition-transform transform translate-x-0 overflow-y-auto">
             <div className="p-5 border-b border-gray-100 flex justify-between items-center">
-              <span className="text-xl font-bold text-blue-600">Ultra verify</span>
+              <span className="flex items-center">
+                <img src="/logo.png" alt="Logo" className="h-8 w-auto object-contain" />
+              </span>
               <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-500 hover:text-gray-800 focus:outline-none">
                 <X className="w-6 h-6" />
               </button>
@@ -236,8 +240,10 @@ export default function Dashboard() {
       )}
 
       <aside className="w-64 border-r border-gray-200 hidden md:flex flex-col shrink-0 bg-white">
-        <div className="p-6 border-b border-gray-200">
-          <Link href="/" className="text-xl font-bold text-blue-600">Ultra verify</Link>
+        <div className="p-6 border-b border-gray-200 flex items-center justify-center">
+          <Link href="/" className="flex items-center">
+            <img src="/logo.png" alt="Logo" className="h-10 w-auto object-contain" />
+          </Link>
         </div>
         <nav className="flex-1 p-4 space-y-1 text-sm">
           <button onClick={() => setView("dashboard")}
