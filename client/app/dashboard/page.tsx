@@ -157,7 +157,7 @@ export default function Dashboard() {
         }).catch(() => { cb(-1); setPriceLoading(false); });
   };
   
-  const startPurchase = (country: string, serviceCode: string, price: number) => {
+  const startPurchase = (countryId: number | string, countryName: string, serviceCode: string, price: number) => {
     const uStr = localStorage.getItem("user");
     if (!uStr) return alert("Session invalid, please login again.");
     let u;
@@ -173,7 +173,7 @@ export default function Dashboard() {
     fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://ultraverify-server.onrender.com"}/api/integrations/daisy/purchase`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: u.id, service: serviceCode, country, price: pNum })
+      body: JSON.stringify({ userId: u.id, service: serviceCode, country: countryId, countryName, price: pNum })
     })
     .then(r => r.json())
     .then(data => {
@@ -553,7 +553,7 @@ export default function Dashboard() {
                       <button 
                         onClick={() => {
                             if (userBalance < servicePrice) setShowInsufficient(true);
-                            else startPurchase('United States', selectedService.code, servicePrice);
+                            else startPurchase(187, 'United States', selectedService.code, servicePrice);
                         }}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-sm font-bold shadow-md w-full transition"
                       >
@@ -705,7 +705,7 @@ export default function Dashboard() {
                     disabled={!allSelectedService || priceLoading || !servicePrice || servicePrice <= 0}
                     onClick={() => {
                       if (allSelectedService && allSelectedCountry && servicePrice && servicePrice > 0) {
-                        startPurchase(allSelectedCountry.id, allSelectedService.code, servicePrice);
+                        startPurchase(allSelectedCountry.id, allSelectedCountry.name, allSelectedService.code, servicePrice);
                       }
                     }}
                   >

@@ -55,7 +55,7 @@ router.post('/daisy/prices', async (req, res) => {
 
 // 4. Purchase Number
 router.post('/daisy/purchase', async (req, res) => {
-  const { userId, country, service, price } = req.body;
+  const { userId, country, countryName, service, price } = req.body;
   try {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
@@ -67,6 +67,9 @@ router.post('/daisy/purchase', async (req, res) => {
 
     // Ensure country is parsed as integer for Daisy API
     const countryIdInt = parseInt(country, 10);
+    if (isNaN(countryIdInt)) {
+        return res.status(400).json({ error: 'Invalid country ID provided. Please refresh and try placing the order again.' });
+    }
 
     // Fetch the correct USD price and max price from Daisy directly so we satisfy their required field safely
     let daisyPrice = null;
@@ -94,7 +97,7 @@ router.post('/daisy/purchase', async (req, res) => {
       user.orders.push({
           id: response.data.id || 'ORD_' + Date.now(),
           service: service,
-          country: country,
+          country: countryName || String(country), // Store the display name
           phone: response.data.phone,
           price: Number(price),
           date: new Date().toISOString(),
