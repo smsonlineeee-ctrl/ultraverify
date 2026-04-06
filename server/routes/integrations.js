@@ -105,7 +105,9 @@ router.post('/daisy/purchase', async (req, res) => {
           phone: phoneNum || 'Pending',
           price: Number(price),
           date: new Date().toISOString(),
-          status: 'Active'
+          status: 'Waiting',
+            provider: 'daisysim',
+            code: null
       });
       user.markModified('orders');
 
@@ -361,5 +363,9 @@ router.post('/pocketfi/verification/bvn', async (req, res) => {
         res.status(500).json({ error: err.response?.data || 'PocketFi BVN match verification failed' });
     }
 });
+
+router.post('/daisy/webhook', async (req, res) => { const { event, activation_id, code } = req.body; if (event !== 'code.received') return res.json({ok: true}); try { const user = await User.findOne({ 'orders.id': activation_id }); if (user) { const order = user.orders.find(o => o.id === activation_id); if (order) { order.code = code; order.status = 'Completed'; user.markModified('orders'); await user.save(); } } res.json({ok: true}); } catch(e) { res.status(500).json({error: e.message}); } });
+
+module.exports = router;
 
 module.exports = router;

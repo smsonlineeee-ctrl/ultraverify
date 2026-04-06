@@ -68,32 +68,32 @@ export default function AdminOrders() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {orders.map((ord: any) => (
-                      <tr key={ord._id || ord.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 font-medium text-gray-900">#{ord._id || ord.id}</td>
-                        <td className="px-4 py-3 text-gray-600">{ord.userEmail}</td>
-                        <td className="px-4 py-3 font-mono">{ord.phoneNumber}</td>
-                        <td className="px-4 py-3">{ord.service}</td>
+                    {orders.map((ord: any, idx: number) => (
+                      <tr key={ord.id || ord._id || idx} className="hover:bg-gray-50"> 
+                        <td className="px-4 py-3 font-medium text-gray-900">#{ord.id || ord._id}</td>
+                        <td className="px-4 py-3 text-gray-600">{ord.email || ord.userEmail}</td>
+                        <td className="px-4 py-3 font-mono">{ord.phone || ord.phoneNumber}</td>
+                        <td className="px-4 py-3 uppercase">{ord.service}</td>
                         <td className="px-4 py-3">{ord.country}</td>
-                        <td className="px-4 py-3 font-medium text-gray-900">₦{ord.cost}</td>
+                        <td className="px-4 py-3 font-medium text-gray-900">{ord.price || ord.cost}</td>
                         <td className="px-4 py-3">
-                          {ord.otp && ord.otp !== '-' ? (
-                            <span className="font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded">{ord.otp}</span>
+                          {ord.code || (ord.otp && ord.otp !== '-' ) ? (
+                            <span className="font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded">{ord.code || ord.otp}</span>
                           ) : (
                             <span className="text-gray-400">-</span>
                           )}
                         </td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-1 rounded text-[10px] font-semibold uppercase tracking-wider ${
-                            ord.status === 'received' ? 'bg-green-100 text-green-700' : 
-                            ord.status === 'cancel' ? 'bg-red-100 text-red-700' : 
+                            (ord.status === 'Completed' || ord.code) ? 'bg-green-100 text-green-700' :
+                            (ord.status === 'Cancelled' || ord.status === 'cancel') ? 'bg-red-100 text-red-700' :
                             'bg-yellow-100 text-yellow-700'
                           }`}>
-                            {ord.status}
+                            {ord.code ? "Active (Received)" : (ord.status || 'Waiting')}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-gray-500">{ord.provider}</td>
-                        <td className="px-4 py-3 text-gray-500">{new Date(ord.time).toLocaleString()}</td>
+                        <td className="px-4 py-3 text-gray-500 capitalize">{ord.provider || 'daisysim'}</td>
+                        <td className="px-4 py-3 text-gray-500">{new Date(ord.date || ord.time || Date.now()).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>

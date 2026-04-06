@@ -28,7 +28,17 @@ export default function AdminTransactions() {
         <div className="max-w-7xl mx-auto text-sm">
           <div className="p-6 rounded-2xl shadow bg-white mb-8">
             <h1 className="text-2xl font-bold mb-1 text-gray-800">Transactions</h1>
-            <p className="text-gray-500">Overview of user wallets, funding, and debits.</p>
+            <p className="text-gray-500 mb-4">Overview of user wallets, funding, and debits.</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-green-50 rounded-xl p-4 border border-green-100">
+                <div className="text-green-600 text-xs font-semibold uppercase tracking-wide">Total Credits (In)</div>
+                <div className="text-2xl font-bold text-green-700 mt-1">₦{transactions.filter(t => t.type === 'Funding' || t.action === 'credit').reduce((acc, t) => acc + Number(t.amount || t.creditAmount || 0), 0).toLocaleString()}</div>
+              </div>
+              <div className="bg-red-50 rounded-xl p-4 border border-red-100">
+                <div className="text-red-600 text-xs font-semibold uppercase tracking-wide">Total Debits (Out)</div>
+                <div className="text-2xl font-bold text-red-700 mt-1">₦{transactions.filter(t => t.type === 'Purchase' || t.action === 'debit').reduce((acc, t) => acc + Number(t.amount || t.debitAmount || 0), 0).toLocaleString()}</div>
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 mb-6">
