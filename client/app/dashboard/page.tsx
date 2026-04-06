@@ -890,12 +890,13 @@ export default function Dashboard() {
               />
               <button className="bg-gray-100 text-blue-600 px-4 py-2 rounded-lg text-xs border border-gray-200">Filter</button>
             </div>
-            <div className="p-6 rounded-2xl shadow bg-white flex flex-col items-center">
-              <div className="w-full flex justify-between font-semibold text-xs text-gray-500 border-b pb-2 mb-4">
-                <span className="w-1/4">Service</span>
-                <span className="w-1/4">Number</span>
-                <span className="w-1/4">Price</span>
-                <span className="w-1/4 text-right">When</span>
+            <div className="p-6 rounded-2xl shadow bg-white flex flex-col items-center overflow-x-auto">
+              <div className="w-full min-w-[600px] flex justify-between font-semibold text-xs text-gray-500 border-b pb-2 mb-4">
+                <span className="w-1/5">Service</span>
+                <span className="w-1/5">Number</span>
+                <span className="w-1/5">Code</span>
+                <span className="w-1/5">Price</span>
+                <span className="w-1/5 text-right">When</span>
               </div>
               
               {userOrders.length === 0 ? (
@@ -903,15 +904,29 @@ export default function Dashboard() {
                   No orders yet. Buy a number.
                 </div>
               ) : (
-                <div className="w-full space-y-3">
-                  {userOrders.map((order, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-xs py-2 border-b border-gray-50">
-                      <span className="w-1/4 font-semibold text-gray-800">{order.service} - {order.country}</span>
-                      <span className="w-1/4 font-mono text-blue-600">{order.phone || order.number}</span>
-                      <span className="w-1/4 font-semibold">₦{order.price}</span>
-                      <span className="w-1/4 text-right text-gray-400">{new Date(order.date || Date.now()).toLocaleDateString()}</span>
+                <div className="w-full min-w-[600px] space-y-3">
+                  {userOrders.map((order, idx) => {
+                    const phone = order.phone || order.number || '';
+                    const displayPhone = phone === 'Pending' || phone === '' ? 'Pending' : (phone.startsWith('+') ? phone : '+' + phone);
+                    return (
+                    <div key={idx} className="flex justify-between items-center text-xs py-2 border-b border-gray-50 hover:bg-gray-50 transition-colors px-1">
+                      <span className="w-1/5 font-semibold text-gray-800">{order.service} - {order.country}</span>
+                      <span className="w-1/5 font-mono text-blue-600">{displayPhone}</span>
+                      <span className="w-1/5 font-mono">
+                        {order.code || order.smsCode ? (
+                          <span className="text-green-700 bg-green-50 font-bold px-2 py-1 rounded truncate block max-w-full" title={order.code || order.smsCode}>
+                            {order.code || order.smsCode}
+                          </span>
+                        ) : (
+                          <span className="text-orange-500 bg-orange-50 font-semibold px-2 py-1 rounded italic truncate block max-w-full" title="Waiting for SMS...">
+                            Waiting...
+                          </span>
+                        )}
+                      </span>
+                      <span className="w-1/5 font-semibold pl-2">₦{order.price}</span>
+                      <span className="w-1/5 text-right text-gray-400">{new Date(order.date || Date.now()).toLocaleDateString()}</span>
                     </div>
-                  ))}
+                  )})}
                 </div>
               )}
             </div>
