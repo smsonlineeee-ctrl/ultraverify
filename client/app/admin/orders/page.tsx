@@ -72,7 +72,7 @@ export default function AdminOrders() {
                       <tr key={ord.id || ord._id || idx} className="hover:bg-gray-50"> 
                         <td className="px-4 py-3 font-medium text-gray-900">#{ord.id || ord._id}</td>
                         <td className="px-4 py-3 text-gray-600">{ord.email || ord.userEmail}</td>
-                        <td className="px-4 py-3 font-mono">{ord.phone || ord.phoneNumber}</td>
+                        <td className="px-4 py-3 font-mono">{String(ord.phone || ord.phoneNumber).startsWith('+') ? String(ord.phone || ord.phoneNumber) : '+' + String(ord.phone || ord.phoneNumber)}</td>
                         <td className="px-4 py-3 uppercase">{ord.service}</td>
                         <td className="px-4 py-3">{ord.country}</td>
                         <td className="px-4 py-3 font-medium text-gray-900">{ord.price || ord.cost}</td>

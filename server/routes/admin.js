@@ -25,8 +25,20 @@ router.post('/users/:id/balance', async (req, res) => {
 
     if (action === 'add') {
       user.balance += val;
+      const tId = 'TXN_' + Date.now();
+      user.transactions = user.transactions || [];
+      user.transactions.push({
+          id: tId, amount: val, type: 'Funding', action: 'credit', status: 'Completed', date: new Date().toISOString(), method: 'Manual Admin Funding'
+      });
+      user.markModified('transactions');
     } else if (action === 'subtract') {
       user.balance = Math.max(0, user.balance - val);
+      const tId = 'TXN_' + Date.now();
+      user.transactions = user.transactions || [];
+      user.transactions.push({
+          id: tId, amount: val, type: 'Debit', action: 'debit', status: 'Completed', date: new Date().toISOString(), method: 'Manual Admin Debit'  
+      });
+      user.markModified('transactions');
     } else {
       return res.status(400).json({ msg: 'Invalid action' });
     }
@@ -44,10 +56,28 @@ router.get('/dashboard-stats', async (req, res) => {
   try {
     const users = await User.find().sort({ joinedAt: -1 });
     const totalUsers = users.length;
-    const totalRevenue = users.reduce((acc, current) => acc + (current.balance || 0), 0);
-    const recentUsers = users.slice(0, 5); // 5 newest
+    let totalTransaction = 0;
+    let successfulOrders = 0;
+    let failedOrders = 0;
+    let actualRevenue = 0;
 
-    // Since this is a demo structure, standard calculations:
+    users.forEach(u => {
+        if (u.orders) {
+            u.orders.forEach(o => {
+                if (o.code) {
+                    successfulOrders++;
+                    actualRevenue += Number(o.price) || 0;
+                } else if (o.status === 'Cancelled' || o.status === 'cancel') {
+                    failedOrders++;
+                }
+            });
+        }
+        if (u.transactions) {
+            totalTransaction += u.transactions.length;
+        }
+    });
+
+    const recentUsers = users.slice(0, 5); // 5 newest
     const startOfDay = new Date();
     startOfDay.setHours(0,0,0,0);
     const newToday = users.filter(u => new Date(u.joinedAt) > startOfDay).length;
@@ -55,11 +85,11 @@ router.get('/dashboard-stats', async (req, res) => {
     res.json({
       totalUsers,
       activeNumbers: 0,
-      revenue: totalRevenue,
+      revenue: actualRevenue,
       newToday,
-      totalTransaction: 0,
-      successfulOrders: 0,
-      failedOrders: 0,
+      totalTransaction,
+      successfulOrders,
+      failedOrders,
       recentUsers
     });
   } catch (err) {
