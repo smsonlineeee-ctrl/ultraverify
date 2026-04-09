@@ -146,6 +146,57 @@ router.get('/daisy/check/:activation_id', async (req, res) => {
   }
 });
 
+// 6. Webhook
+router.all('/daisy/webhook', async (req, res) => {
+  try {
+    const rawPayload = req.method === 'GET' ? req.query : req.body;
+    // Some providers wrap everything in a 'data' object
+    const payload = rawPayload?.data || rawPayload;
+    
+    console.log('[DAISY WEBHOOK] Payload received:', rawPayload);
+
+    // Extract relevant data, as DaisySim may send different keys based on API version
+    const activationId = payload.id || payload.activation_id || payload.order_id || payload.orderId;
+    const smsText = payload.text || payload.sms || payload.code || payload.message;
+    const status = payload.status || 'Completed';
+
+    if (!activationId || !smsText) {
+      // Must respond 200 to acknowledge receipt even if parsing fails
+      return res.status(200).send('OK'); 
+    }
+
+    // Find the user with this specific order id
+    const user = await User.findOne({ 'orders.id': activationId });
+    if (!user) {
+      console.log('[DAISY WEBHOOK] User not found for order ID:', activationId);
+      return res.status(200).send('OK');
+    }
+
+    // Update the exact order in the user's orders array
+    let updated = false;
+    for (let i = 0; i < user.orders.length; i++) {
+        // loose equality to handle integer/string mismatches
+        if (user.orders[i].id == activationId) {
+            user.orders[i].code = smsText;
+            user.orders[i].status = status;
+            updated = true;
+            break;
+        }
+    }
+
+    if (updated) {
+        user.markModified('orders');
+        await user.save();
+        console.log(`[DAISY WEBHOOK] Order ${activationId} successfully updated with code.`);
+    }
+
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error('[DAISY WEBHOOK] Error:', err.message);
+    res.status(500).send('Webhook server error');
+  }
+});
+
 // ---------------------------
 // POCKETFI.NG PAYMENT ROUTES (Virtual Accounts)
 // ---------------------------

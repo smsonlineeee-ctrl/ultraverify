@@ -57,6 +57,18 @@ export default function Dashboard() {
   const [topUpPercentage, setTopUpPercentage] = useState<number>(10);
 
   useEffect(() => {
+    let interval: any;
+    if (view === "dashboard" || view === "history") {
+      interval = setInterval(() => {
+        fetchUserHistory();
+      }, 5000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [view]);
+
+  useEffect(() => {
     const isClient = typeof window !== "undefined";
     if (isClient) {
       // Fetch global settings (Exchange rate & Margin)
